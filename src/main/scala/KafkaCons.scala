@@ -1,13 +1,22 @@
+import java.util
 import java.util.Properties
-
-import org.apache.kafka.clients.consumer.KafkaConsumer
+import collection.JavaConverters._
+import org.apache.kafka.clients.consumer.{ConsumerRecords, KafkaConsumer}
 
 
 object KafkaCons extends App{
   val props = new Properties()
   props.put("bootstrap.servers", "localhost:9092")
-  props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-  props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-  val consumer = new KafkaConsumer[](props)
+  props.put("group.id", "kafka_test");
+  props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+  props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
+  val consumer = new KafkaConsumer[String, String] (props)
+  consumer.subscribe(util.Arrays.asList("kafka_test"))
+  while(true) {
+    val records: ConsumerRecords[String, String] = consumer.poll(100)
+    records.asScala.foreach(record => {
+      println( record.value() + ":" + record.offset())
+    })
+  }
 }
