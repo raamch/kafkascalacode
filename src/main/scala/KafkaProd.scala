@@ -9,7 +9,7 @@ object KafkaProd extends App{
   props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   val producer = new KafkaProducer[Integer, String](props)
 
-  for (line <- Source.fromFile("TheTimeMachine.txt").getLines()) {
+  for (line <- Source.fromFile("RAJU-20160710-1052a.log").getLines()) {
     producer.send(new ProducerRecord[Integer, String] ("test",line))
   }
   producer.send(new ProducerRecord[Integer, String] ("test","****Completed!****"))
